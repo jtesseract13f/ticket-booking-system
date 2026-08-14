@@ -1,4 +1,5 @@
-﻿using ConcertAggregator.DAL;
+﻿using ConcertAggregator.BLL;
+using ConcertAggregator.DAL;
 using ConcertAggregator.DAL.Repositories;
 using ConcertAggregator.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ public class UnitTest1
     [Fact]
     public void Test1()
     {
-        
+        var strategy = new NodeStrategy();
     }
     [Fact]
     public async Task Create_ShouldReturnSuccess_WhenDataGiven()

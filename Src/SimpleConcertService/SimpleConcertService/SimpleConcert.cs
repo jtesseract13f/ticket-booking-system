@@ -1,4 +1,4 @@
-namespace SimpleConcertApi;
+namespace SimpleConcertService;
 
 public record SimpleConcert(
     Guid Id,

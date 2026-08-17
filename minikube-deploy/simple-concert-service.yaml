@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  repository: simple-concert-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  targetPort: 80
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Development"
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=postgresql-postgresql;Database=simple_concert_api_db;Username=myuser;Password=mypassword"
+  - name: Kafka__BootstrapServers
+    value: "kafka-kafka:9092"
+  - name: ServiceName
+    value: "simple-concert-service"
+
+resources:
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: true
+  host: ticket-booking-system.local
+  path: /simple-concert-service
+  tlsSecret: ticket-booking-system-tls

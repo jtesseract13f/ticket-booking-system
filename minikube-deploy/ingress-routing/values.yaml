@@ -1,0 +1,10 @@
+ingressName: ticket-booking-system-ingress
+host: ticket-booking-system.local
+services:
+  - path: /simple-concert-service
+    serviceName: simple-concert-service-microservice-generic
+    servicePort: 80
+  - path: /service-b
+    serviceName: service-b
+    servicePort: 80
+  # добавляйте новые сервисы по мере необходимости

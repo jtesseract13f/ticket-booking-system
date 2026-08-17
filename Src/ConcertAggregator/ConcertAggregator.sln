@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertAggregator", "Concer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertTests", "ConcertTests\ConcertTests.csproj", "{387F9E23-6121-4DB6-BE71-CF51CAEA5742}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleConcertApi", "SimpleConcertApi\SimpleConcertApi.csproj", "{E7E47FCE-96D4-4DE9-A8EB-C7E24CE36880}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleCinemaApi", "SimpleCinemaApi\SimpleCinemaApi.csproj", "{20205C1F-8CAF-4B85-82B4-216CDF3FE516}"
 EndProject
 Global
@@ -22,10 +20,6 @@ Global
 		{387F9E23-6121-4DB6-BE71-CF51CAEA5742}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{387F9E23-6121-4DB6-BE71-CF51CAEA5742}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{387F9E23-6121-4DB6-BE71-CF51CAEA5742}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7E47FCE-96D4-4DE9-A8EB-C7E24CE36880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7E47FCE-96D4-4DE9-A8EB-C7E24CE36880}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7E47FCE-96D4-4DE9-A8EB-C7E24CE36880}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7E47FCE-96D4-4DE9-A8EB-C7E24CE36880}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20205C1F-8CAF-4B85-82B4-216CDF3FE516}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{20205C1F-8CAF-4B85-82B4-216CDF3FE516}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20205C1F-8CAF-4B85-82B4-216CDF3FE516}.Release|Any CPU.ActiveCfg = Release|Any CPU

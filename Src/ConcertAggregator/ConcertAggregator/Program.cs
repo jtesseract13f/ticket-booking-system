@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<ConcertDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.Configure<RequestLocalizationOptions>(options =>

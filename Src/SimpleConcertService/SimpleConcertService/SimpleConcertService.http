@@ -1,0 +1,6 @@
+@SimpleConcertService_HostAddress = http://localhost:5096
+
+GET {{SimpleConcertService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

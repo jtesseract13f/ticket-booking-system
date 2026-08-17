@@ -1,0 +1,44 @@
+replicaCount: 1
+
+image:
+  repository: myapp
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Development"
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=postgres-service;Database=myapp;Username=user;Password=pass"
+  - name: Kafka__BootstrapServers
+    value: "kafka-service:9092"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /manage/health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /manage/health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+nameOverride: ""
+fullnameOverride: ""

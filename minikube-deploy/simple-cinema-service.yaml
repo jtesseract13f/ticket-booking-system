@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: simple-concert-service
+  repository: simple-cinema-service
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -13,11 +13,11 @@ env:
   - name: ASPNETCORE_ENVIRONMENT
     value: "Development"
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=postgresql-postgresql;Database=simple_concert_api_db;Username=myuser;Password=mypassword"
+    value: "Host=postgresql-postgresql;Database=simple_cinema_api_db;Username=myuser;Password=mypassword"
   - name: Kafka__BootstrapServers
     value: "kafka-kafka:9092"
   - name: ServiceName
-    value: "simple-concert-service"
+    value: "simple-cinema-service"
 
 resources:
   limits:
@@ -30,5 +30,5 @@ resources:
 ingress:
   enabled: false
   host: ticket-booking-system.local
-  path: /simple-concert-service
+  path: /simple-cinema-service
   tlsSecret: ticket-booking-system-tls

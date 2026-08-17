@@ -1,20 +1,26 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.ingressName }}
+  name: ticket-booking-system-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
+  ingressClassName: nginx
   rules:
-  - host: {{ .Values.host }}
+  - host: ticket-booking-system.local
     http:
       paths:
-      {{- range .Values.services }}
-      - path: {{ .path }}
-        pathType: {{ .pathType | default "Prefix" }}
+      - path: /simple-concert-service(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
-            name: {{ .serviceName }}
+            name: simple-concert-service-microservice-generic
             port:
-              number: {{ .servicePort | default 80 }}
-      {{- end }}
+              number: 80
+      - path: /simple-cinema-service(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: simple-cinema-service-microservice-generic
+            port:
+              number: 80

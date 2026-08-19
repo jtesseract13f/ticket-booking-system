@@ -7,4 +7,3 @@ services:
   - path: /simple-cinema-service
     serviceName: simple-cinema-service-microservice-generic
     servicePort: 80
-  # добавляйте новые сервисы по мере необходимости

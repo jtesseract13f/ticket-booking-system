@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SimpleConcertService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,20 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
+
+builder.Services.AddDbContext<DbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 var app = builder.Build();
+try //Migrator
+{
+    using var scope = ((IApplicationBuilder)app).ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope();
+    scope.ServiceProvider.GetRequiredService<DbContext>().Database.Migrate();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+    throw;
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

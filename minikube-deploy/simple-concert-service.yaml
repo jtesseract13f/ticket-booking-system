@@ -13,7 +13,7 @@ env:
   - name: ASPNETCORE_ENVIRONMENT
     value: "Development"
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=postgresql-postgresql;Database=simple_concert_api_db;Username=myuser;Password=mypassword"
+    value: "Host=postgresql;Database=simple_concert_service_db;Username=myuser;Password=mypassword"
   - name: Kafka__BootstrapServers
     value: "kafka-kafka:9092"
   - name: ServiceName

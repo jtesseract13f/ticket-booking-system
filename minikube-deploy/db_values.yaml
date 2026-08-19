@@ -1,0 +1,9 @@
+auth:
+  username: myuser
+  password: mypassword
+  database: mydatabase
+
+initdbScripts:
+  init.sql: |
+    CREATE DATABASE simple_concert_service_db;
+    GRANT ALL PRIVILEGES ON DATABASE simple_concert_service_db TO myuser;

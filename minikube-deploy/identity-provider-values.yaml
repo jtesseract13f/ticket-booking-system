@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: simple-cinema-service
+  repository: identity-provider
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -13,11 +13,11 @@ env:
   - name: ASPNETCORE_ENVIRONMENT
     value: "Development"
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=postgresql;Database=service;Username=myuser;Password=mypassword"
+    value: "Host=postgresql;Database=identity;Username=myuser;Password=mypassword"
   - name: Kafka__BootstrapServers
     value: "kafka-kafka:9092"
   - name: ServiceName
-    value: "simple-cinema-service"
+    value: "identity-provider"
 
 resources:
   limits:
@@ -30,5 +30,5 @@ resources:
 ingress:
   enabled: false
   host: ticket-booking-system.local
-  path: /simple-cinema-service
+  path: /identity-provider
   tlsSecret: ticket-booking-system-tls

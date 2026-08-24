@@ -7,3 +7,6 @@ services:
   - path: /simple-cinema-service
     serviceName: simple-cinema-service-microservice-generic
     servicePort: 80
+  - path: /identity-provider
+    serviceName: identity-provider-microservice-generic
+    servicePort: 80

@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using IdP.Web.Features.Connect;
 using IdP.Web.Infrastructure.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
@@ -11,8 +11,9 @@ using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
-namespace IdP.Web.Features.Connect
+namespace IdentityProvider.Features.Connect
 {
+    [Route("connect")]
     public class ConnectController : Controller
     {
         private readonly IOpenIddictApplicationManager _applicationManager;
@@ -41,8 +42,8 @@ namespace IdP.Web.Features.Connect
         // -------------------------------------------------------------------------
         // AUTHORIZE ENDPOINT
         // -------------------------------------------------------------------------
-        [HttpGet("~/connect/authorize")]
-        [HttpPost("~/connect/authorize")]
+        [HttpGet("authorize")]
+        [HttpPost("authorize")]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Authorize()
         {
@@ -186,7 +187,7 @@ namespace IdP.Web.Features.Connect
         // -------------------------------------------------------------------------
         // TOKEN EXCHANGE ENDPOINT
         // -------------------------------------------------------------------------
-        [HttpPost("~/connect/token")]
+        [HttpPost("token")]
         public async Task<IActionResult> Exchange()
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??
@@ -307,8 +308,8 @@ namespace IdP.Web.Features.Connect
         // USERINFO ENDPOINT
         // -------------------------------------------------------------------------
         [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
-        [HttpGet("~/connect/userinfo")]
-        [HttpPost("~/connect/userinfo")]
+        [HttpGet("userinfo")]
+        [HttpPost("userinfo")]
         [IgnoreAntiforgeryToken]
         [Produces("application/json")]
         public async Task<IActionResult> Userinfo()
@@ -359,8 +360,8 @@ namespace IdP.Web.Features.Connect
         // -------------------------------------------------------------------------
         // LOGOUT ENDPOINT
         // -------------------------------------------------------------------------
-        [HttpGet("~/connect/logout")]
-        [HttpPost("~/connect/logout")]
+        [HttpGet("logout")]
+        [HttpPost("logout")]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Logout()
         {

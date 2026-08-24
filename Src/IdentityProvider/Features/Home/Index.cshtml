@@ -26,14 +26,14 @@
                 <!-- Navigation Links -->
                 @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
                 {
-                    <a href="/admin/users" class="block mt-4 lg:inline-block lg:mt-0 text-gray-600 hover:text-indigo-600 mr-4 font-medium">
+                    <a href="/identity-provider/admin/users" class="block mt-4 lg:inline-block lg:mt-0 text-gray-600 hover:text-indigo-600 mr-4 font-medium">
                         Admin Panel
                     </a>
                 }
             </div>
             <div>
                 <!-- Logout Button -->
-                <a href="/connect/logout" class="inline-block text-sm px-4 py-2 leading-none border rounded text-indigo-600 border-indigo-600 hover:border-transparent hover:text-white hover:bg-indigo-600 mt-4 lg:mt-0 transition">
+                <a href="/identity-provider/connect/logout" class="inline-block text-sm px-4 py-2 leading-none border rounded text-indigo-600 border-indigo-600 hover:border-transparent hover:text-white hover:bg-indigo-600 mt-4 lg:mt-0 transition">
                     Logout
                 </a>
             </div>
@@ -66,13 +66,13 @@
             <div class="bg-white shadow rounded-lg p-6">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
                 <div class="flex flex-col space-y-3">
-                    <a href="/account/manage" class="text-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded border border-gray-300">
+                    <a href="/identity-provider/account/manage" class="text-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded border border-gray-300">
                         Manage Profile (Not Implemented)
                     </a>
 
                     @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
                     {
-                        <a href="/admin/users" class="text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">
+                        <a href="/identity-provider/admin/users" class="text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">
                             Manage Users
                         </a>
                     }

@@ -1,12 +1,10 @@
-﻿
-using System.Security.Claims;
-using IdP.Web.Infrastructure.Data;
+﻿using IdP.Web.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-//using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
+//using Microsoft.Data.SqlClient;
 
-namespace IdP.Web.Infrastructure.Worker
+namespace IdentityProvider.Infrastructure.Worker
 {
     public class ClientSeederWorker : IHostedService
     {
@@ -21,30 +19,13 @@ namespace IdP.Web.Infrastructure.Worker
         {
             using var scope = _serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            // -------------------------------------------------------------------------
-            // 1. ROBUST MIGRATION STRATEGY
-            // -------------------------------------------------------------------------
             var retries = 10;
             while (retries > 0)
             {
                 try
                 {
-                    // Attempt to apply migrations
                     await context.Database.MigrateAsync(cancellationToken);
-                    break; // Success, Exit loop
-                }
-                catch (ArgumentException ex) //when (ex.Number == 1801)
-                {
-                    // ERROR 1801: "Database already exists"
-                    // Cause: Race condition. EF thought DB was missing, tried to create it, but it was there.
-                    // FIX: Do NOT break. Retry! 
-                    // Next time we call MigrateAsync, EF will see the DB exists and skip creation,
-                    // moving straight to applying the migrations.
-
-                    retries--;
-                    if (retries == 0) throw;
-                    await Task.Delay(2000, cancellationToken);
+                    break;
                 }
                 catch(Exception)
                 {
@@ -56,16 +37,11 @@ namespace IdP.Web.Infrastructure.Worker
                     await Task.Delay(2000, cancellationToken);
                 }
             }
-
-            // -------------------------------------------------------------------------
-            // 2. SEEDING LOGIC
-            // -------------------------------------------------------------------------
             var appManager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
             var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            // A. SEED SCOPES (The "Resource Server" Definitions)
             if(await scopeManager.FindByNameAsync("ims_resource_server", cancellationToken) is null)
             {
                 await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
@@ -83,15 +59,17 @@ namespace IdP.Web.Infrastructure.Worker
             // B. SEED CLIENTS
 
             // 1. Angular/React Client
-            if (await appManager.FindByClientIdAsync("ims-angular-client", cancellationToken) is null)
+            if (await appManager.FindByClientIdAsync("ims-react-client", cancellationToken) is null)
             {
                 await appManager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
-                    ClientId = "ims-angular-client",
+                    ClientId = "ims-react-client",
                     ConsentType = OpenIddictConstants.ConsentTypes.Explicit,
-                    DisplayName = "Angular Client",
-                    RedirectUris = { new Uri("http://localhost:4200/callback") },
-                    PostLogoutRedirectUris = { new Uri("http://localhost:4200/") },
+                    DisplayName = "React Client",
+                    RedirectUris = { new Uri("http://localhost:5173/callback") },
+                    PostLogoutRedirectUris = { new Uri("http://localhost:5173") , 
+                        new Uri("http://localhost:5173/") },
+                    
                     Permissions =
                     {
                         OpenIddictConstants.Permissions.Endpoints.Authorization,
@@ -107,8 +85,7 @@ namespace IdP.Web.Infrastructure.Worker
                         OpenIddictConstants.Permissions.Scopes.Profile,
                         OpenIddictConstants.Permissions.Scopes.Roles,
                         OpenIddictConstants.Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OfflineAccess,
-                    
-                        // Add the Custom Scope Permission using the prefix constant
+                        
                         OpenIddictConstants.Permissions.Prefixes.Scope + "ims_resource_server"
                     },
                     Requirements =
@@ -118,7 +95,6 @@ namespace IdP.Web.Infrastructure.Worker
                 }, cancellationToken);
             }
 
-            // 2. Postman Client
             if (await appManager.FindByClientIdAsync("postman", cancellationToken) is null)
             {
                 await appManager.CreateAsync(new OpenIddictApplicationDescriptor
@@ -133,6 +109,7 @@ namespace IdP.Web.Infrastructure.Worker
                         OpenIddictConstants.Permissions.Endpoints.Token,
                         OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
                         OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
+                        OpenIddictConstants.Permissions.Endpoints.EndSession,
                         OpenIddictConstants.Permissions.ResponseTypes.Code,
                         OpenIddictConstants.Permissions.Scopes.Email,
                         OpenIddictConstants.Permissions.Scopes.Profile,
@@ -147,61 +124,7 @@ namespace IdP.Web.Infrastructure.Worker
                     }
                 }, cancellationToken);
             }
-
-            // 3. Console Client (M2M)
-            if (await appManager.FindByClientIdAsync("console", cancellationToken) is null)
-            {
-                await appManager.CreateAsync(new OpenIddictApplicationDescriptor
-                {
-                    ClientId = "console",
-                    ClientSecret = "console-secret",
-                    DisplayName = "Console App",
-                    Permissions =
-                {
-                    OpenIddictConstants.Permissions.Endpoints.Token,
-                    OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
-                    // Give machine access to IMS
-                    OpenIddictConstants.Permissions.Prefixes.Scope + "ims_resource_server"
-                }
-                }, cancellationToken);
-            }
             
-
-            if (await appManager.FindByClientIdAsync("pos-client", cancellationToken) is null)
-            {
-                await appManager.CreateAsync(new OpenIddictApplicationDescriptor
-                {
-                    ClientId = "pos-client",
-                    // No Secret for PKCE Public Clients
-                    ConsentType = OpenIddictConstants.ConsentTypes.Explicit,
-                    DisplayName = "POS System",
-                    RedirectUris = { new Uri("http://127.0.0.1:7890/callback") },
-                    PostLogoutRedirectUris = { new Uri("http://127.0.0.1:7890/") },
-                    Permissions =
-                    {
-                        OpenIddictConstants.Permissions.Endpoints.Authorization,
-                        OpenIddictConstants.Permissions.Endpoints.EndSession,
-                        OpenIddictConstants.Permissions.Endpoints.Token,
-
-                        OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-                        OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
-
-                        OpenIddictConstants.Permissions.ResponseTypes.Code,
-
-                        OpenIddictConstants.Permissions.Scopes.Profile,
-                        OpenIddictConstants.Permissions.Scopes.Email,
-                        OpenIddictConstants.Permissions.Scopes.Roles,
-
-                        OpenIddictConstants.Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OfflineAccess,
-                    },
-                    Requirements =
-                    {
-                        OpenIddictConstants.Requirements.Features.ProofKeyForCodeExchange
-                    }
-                }, cancellationToken);
-            }
-
-            // C. SEED ROLES & PERMISSIONS
             if (await roleManager.FindByNameAsync("User") is null)
             {
                 var role = new IdentityRole("User");
@@ -214,7 +137,6 @@ namespace IdP.Web.Infrastructure.Worker
                 await roleManager.CreateAsync(role);
             }
 
-            // D. SEED USER
             if (await userManager.FindByNameAsync("sosal") is null)
             {
                 var user = new ApplicationUser

@@ -13,11 +13,25 @@ env:
   - name: ASPNETCORE_ENVIRONMENT
     value: "Development"
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=postgresql;Database=identity;Username=myuser;Password=mypassword"
+    value: "Host=postgresql;Database=identity-provider-db;Username=myuser;Password=mypassword"
   - name: Kafka__BootstrapServers
     value: "kafka-kafka:9092"
   - name: ServiceName
     value: "identity-provider"
+
+livenessProbe:
+  httpGet:
+    path: /identity-provider/manage/health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /identity-provider/manage/health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
 
 resources:
   limits:

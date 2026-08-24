@@ -7,3 +7,5 @@ initdbScripts:
   init.sql: |
     CREATE DATABASE simple_concert_service_db;
     GRANT ALL PRIVILEGES ON DATABASE simple_concert_service_db TO myuser;
+    CREATE DATABASE identity-provider-db;
+    GRANT ALL PRIVILEGES ON DATABASE identity-provider-db TO myuser;

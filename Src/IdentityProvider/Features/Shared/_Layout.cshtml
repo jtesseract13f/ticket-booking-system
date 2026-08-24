@@ -30,33 +30,33 @@
         <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
             <div class="text-sm lg:flex-grow">
                 <!-- Link back to main Dashboard -->
-                <a href="/" class="block mt-4 lg:inline-block lg:mt-0 mr-4 text-indigo-200 hover:text-white">
+                <a href="/identity-provider" class="block mt-4 lg:inline-block lg:mt-0 mr-4 text-indigo-200 hover:text-white">
                     Dashboard
                 </a>
 
                 <!-- Admin Navigation -->
-                <a href="/admin/users" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/users")">
+                <a href="/identity-provider/admin/users" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/users")">
                     Users
                 </a>
 
-                <a href="/admin/roles" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/roles")">
+                <a href="/identity-provider/admin/roles" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/roles")">
                     Roles
                 </a>
 
-                <a href="/admin/scopes" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/scopes")">
+                <a href="/identity-provider/admin/scopes" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/scopes")">
                     Scopes (APIs)
                 </a>
 
-                <a href="/admin/permissions" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/permissions")">
+                <a href="/identity-provider/admin/permissions" class="block mt-4 lg:inline-block lg:mt-0 mr-4 @GetLinkClass("/admin/permissions")">
                     Permissions
                 </a>
 
-                <a href="/admin/clients" class="block mt-4 lg:inline-block lg:mt-0 @GetLinkClass("/admin/clients")">
+                <a href="/identity-provider/admin/clients" class="block mt-4 lg:inline-block lg:mt-0 @GetLinkClass("/admin/clients")">
                     Clients
                 </a>
             </div>
             <div>
-                <form action="/connect/logout" method="get">
+                <form action="/identity-provider/connect/logout" method="get">
                     <button type="submit" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-indigo-500 hover:bg-white mt-4 lg:mt-0">Logout</button>
                 </form>
             </div>

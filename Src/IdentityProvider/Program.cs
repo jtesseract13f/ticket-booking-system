@@ -1,7 +1,8 @@
+using IdentityProvider.Infrastructure.Worker;
 using IdP.Web.Infrastructure;
 using IdP.Web.Infrastructure.Data;
-using IdP.Web.Infrastructure.Worker;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
@@ -20,6 +21,8 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
 });
+
+
 
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -59,7 +62,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/account/login";
     options.AccessDeniedPath = "/account/accessdenied";
-    // If 'Remember Me' is checked, the cookie lasts this long:
+    // If 'Remember Me' is checked, the cookie lidentity-providerasts this long:
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
 
     // If 'Remember Me' is NOT checked, the cookie expires when the browser closes
@@ -71,6 +74,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // OPENIDDICT CONFIGURATION
 // =============================================================================
+
+var issuerUrl = new Uri("http://ticket-booking-system.local/identity-provider", UriKind.Absolute);
 builder.Services.AddOpenIddict()
     // A. Core: Integrate with EF Core to store tokens/apps in DB
     .AddCore(options =>
@@ -81,12 +86,17 @@ builder.Services.AddOpenIddict()
     // B. Server: Handle the OIDC Protocol
     .AddServer(options =>
     {
+        options.SetIssuer(issuerUrl);
         // 1. Define the endpoints (matches ConnectController routes)
-        options.SetAuthorizationEndpointUris("/connect/authorize")
-               .SetTokenEndpointUris("/connect/token")
-               .SetUserInfoEndpointUris("/connect/userinfo")
-               .SetEndSessionEndpointUris("/connect/logout");
-
+        options.SetAuthorizationEndpointUris(new Uri($"{issuerUrl}/connect/authorize", UriKind.Absolute))
+               .SetTokenEndpointUris(new Uri($"{issuerUrl}/connect/token", UriKind.Absolute))
+               .SetUserInfoEndpointUris(new Uri($"{issuerUrl}/connect/userinfo", UriKind.Absolute))
+               .SetEndSessionEndpointUris(new Uri($"{issuerUrl}/connect/logout", UriKind.Absolute));
+        options.SetConfigurationEndpointUris(new Uri($"{issuerUrl}/.well-known/openid-configuration", UriKind.Absolute));
+        options.SetJsonWebKeySetEndpointUris(new Uri($"{issuerUrl}/.well-known/jwks", UriKind.Absolute));
+        
+        
+        
         // 2. Define flows
         options.AllowAuthorizationCodeFlow()
                .AllowClientCredentialsFlow()
@@ -132,7 +142,27 @@ builder.Services.AddCors();
 builder.Services.AddTransient<ICorsPolicyProvider, DynamicCorsPolicyProvider>();
 
 var app = builder.Build();
+// Логируем путь ДО обрезки
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Original path: {context.Request.Path}");
+    await next();
+});
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
+app.UsePathBase("/identity-provider");
+
+
+
+// Логируем путь ПОСЛЕ обрезки
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"After UsePathBase: {context.Request.Path}");
+    await next();
+});
 // PIPELINE
 // =============================================================================
 if (app.Environment.IsDevelopment())
@@ -140,7 +170,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
+
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseCors();
@@ -152,8 +183,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseEndpoints(endpoints =>
+{
+});
+
 // Map Slices
 app.MapControllers(); // Maps the ConnectController
 app.MapRazorPages();  // Maps the Login UI
-
+app.MapGet("/manage/health", () => StatusCodes.Status200OK);
 app.Run();

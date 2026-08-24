@@ -2,7 +2,7 @@
 @model IdP.Web.Features.Account.Register.RegisterModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-	ViewData["Title"] = "Regsiter";
+	ViewData["Title"] = "Register";
 }
 
 <!DOCTYPE html>
@@ -24,7 +24,7 @@
                 <p class="mt-2 text-center text-sm text-gray-600">
                     Already have an account?
                     <!-- Link back to Login, preserving the ReturnUrl -->
-                    <a href="/account/login?returnUrl=@System.Net.WebUtility.UrlEncode(Model.ReturnUrl)" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    <a href="/identity-provider/account/login?returnUrl=@System.Net.WebUtility.UrlEncode(Model.ReturnUrl)" class="font-medium text-indigo-600 hover:text-indigo-500">
                         Sign in
                     </a>
                 </p>

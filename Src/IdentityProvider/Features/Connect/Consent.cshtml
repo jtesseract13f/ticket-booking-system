@@ -50,7 +50,7 @@
                 Post back to the ReturnUrl (which is /connect/authorize?client_id=...).
                 This ensures we stay on the valid OpenIddict Endpoint.
             -->
-            <form method="post" action="/connect/authorize" class="mt-8 space-y-4">
+            <form method="post" action="/identity-provider/connect/authorize" class="mt-8 space-y-4">
                 @Html.AntiForgeryToken()
 
                 @if (!string.IsNullOrEmpty(Model?.ReturnUrl))

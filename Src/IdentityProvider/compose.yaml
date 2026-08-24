@@ -1,7 +1,0 @@
-﻿services:
-  identityprovider:
-    image: identityprovider
-    build:
-      context: .
-      dockerfile: IdentityProvider/Dockerfile
-

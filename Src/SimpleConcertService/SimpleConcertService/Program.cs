@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SimpleConcertService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,9 +20,21 @@ builder.Services.AddOpenApi(options =>
         return Task.CompletedTask;
     });
 });
-builder.Services.AddOpenApi();
+
+
+builder.Services.AddDbContext<DbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
+try //Migrator
+{
+    using var scope = ((IApplicationBuilder)app).ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope();
+    scope.ServiceProvider.GetRequiredService<DbContext>().Database.Migrate();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+    throw;
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -39,7 +52,7 @@ app.MapGet("/manage/health", () => StatusCodes.Status200OK);
 var apiV1 = app.MapGroup("/api/v1");
 
 //TODO: Add testing data, about 5 concerts
-apiV1.MapGet("/cinemas", () => new List<SimpleConcert>()
+apiV1.MapGet("/concerts", () => new List<SimpleConcert>()
 {
     new SimpleConcert(
         Guid.Empty, 

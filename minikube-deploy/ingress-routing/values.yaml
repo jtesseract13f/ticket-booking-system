@@ -4,7 +4,9 @@ services:
   - path: /simple-concert-service
     serviceName: simple-concert-service-microservice-generic
     servicePort: 80
-  - path: /service-b
-    serviceName: service-b
+  - path: /simple-cinema-service
+    serviceName: simple-cinema-service-microservice-generic
     servicePort: 80
-  # добавляйте новые сервисы по мере необходимости
+  - path: /identity-provider
+    serviceName: identity-provider-microservice-generic
+    servicePort: 80

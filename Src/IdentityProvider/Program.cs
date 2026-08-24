@@ -1,0 +1,194 @@
+using IdentityProvider.Infrastructure.Worker;
+using IdP.Web.Infrastructure;
+using IdP.Web.Infrastructure.Data;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using OpenIddict.Abstractions;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages(options =>
+{
+    options.RootDirectory = "/Features";
+    // Secure the admin folder
+    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminRole");
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+});
+
+
+
+// Database
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseNpgsql(connectionString);
+    // Register the entity sets needed by OpenIddict.
+    options.UseOpenIddict();
+});
+
+// Background Worker (Seeder)
+builder.Services.AddHostedService<ClientSeederWorker>();
+
+// IDENTITY CONFIGURATION (HEADLESS)
+// =============================================================================
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Relaxed settings for dev
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 4;
+
+    // User settings
+    options.User.RequireUniqueEmail = true;
+
+    // SignIn settings
+    options.SignIn.RequireConfirmedAccount = false; // Set to true for email verification flows
+});
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/account/login";
+    options.AccessDeniedPath = "/account/accessdenied";
+    // If 'Remember Me' is checked, the cookie lidentity-providerasts this long:
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+
+    // If 'Remember Me' is NOT checked, the cookie expires when the browser closes
+    // (This is the default behavior, controlled by isPersistent in the login logic)
+
+    // SlidingExpiration means if they use the app, the timer resets.
+    options.SlidingExpiration = true;
+});
+
+// OPENIDDICT CONFIGURATION
+// =============================================================================
+
+var issuerUrl = new Uri("http://ticket-booking-system.local/identity-provider", UriKind.Absolute);
+builder.Services.AddOpenIddict()
+    // A. Core: Integrate with EF Core to store tokens/apps in DB
+    .AddCore(options =>
+    {
+        options.UseEntityFrameworkCore()
+               .UseDbContext<ApplicationDbContext>();
+    })
+    // B. Server: Handle the OIDC Protocol
+    .AddServer(options =>
+    {
+        options.SetIssuer(issuerUrl);
+        // 1. Define the endpoints (matches ConnectController routes)
+        options.SetAuthorizationEndpointUris(new Uri($"{issuerUrl}/connect/authorize", UriKind.Absolute))
+               .SetTokenEndpointUris(new Uri($"{issuerUrl}/connect/token", UriKind.Absolute))
+               .SetUserInfoEndpointUris(new Uri($"{issuerUrl}/connect/userinfo", UriKind.Absolute))
+               .SetEndSessionEndpointUris(new Uri($"{issuerUrl}/connect/logout", UriKind.Absolute));
+        options.SetConfigurationEndpointUris(new Uri($"{issuerUrl}/.well-known/openid-configuration", UriKind.Absolute));
+        options.SetJsonWebKeySetEndpointUris(new Uri($"{issuerUrl}/.well-known/jwks", UriKind.Absolute));
+        
+        
+        
+        // 2. Define flows
+        options.AllowAuthorizationCodeFlow()
+               .AllowClientCredentialsFlow()
+               .AllowRefreshTokenFlow();
+
+        // 3. Define scopes
+        options.RegisterScopes(
+            OpenIddictConstants.Scopes.Email,
+            OpenIddictConstants.Scopes.Profile,
+            OpenIddictConstants.Scopes.Roles,
+            OpenIddictConstants.Scopes.OfflineAccess);
+
+        // 4. Security (Dev only: Ephemeral keys)
+        // IN PRODUCTION: Use .AddEncryptionCertificate() and .AddSigningCertificate()
+        options.AddDevelopmentEncryptionCertificate()
+               .AddDevelopmentSigningCertificate()
+               .DisableAccessTokenEncryption();
+
+        // 5. ASP.NET Core Integration
+        options.UseAspNetCore()
+               // We enable "Passthrough" so our ConnectController handles the logic
+               // instead of OpenIddict handling it automatically invisibly.
+               .EnableTokenEndpointPassthrough()
+               .EnableAuthorizationEndpointPassthrough()
+               .EnableUserInfoEndpointPassthrough()
+               .EnableEndSessionEndpointPassthrough();
+
+        if (builder.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+        {
+            options.UseAspNetCore().DisableTransportSecurityRequirement();
+        }
+    })
+    // C. Validation: Needed if this app also consumes tokens (e.g. UserInfo endpoint)
+    .AddValidation(options =>
+    {
+        options.UseLocalServer();
+        options.UseAspNetCore();
+    });
+
+// CORS
+// =============================================================================
+builder.Services.AddCors();
+builder.Services.AddTransient<ICorsPolicyProvider, DynamicCorsPolicyProvider>();
+
+var app = builder.Build();
+// Логируем путь ДО обрезки
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Original path: {context.Request.Path}");
+    await next();
+});
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
+app.UsePathBase("/identity-provider");
+
+
+
+// Логируем путь ПОСЛЕ обрезки
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"After UsePathBase: {context.Request.Path}");
+    await next();
+});
+// PIPELINE
+// =============================================================================
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+
+//app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseCors();
+
+// Standard Routing
+app.UseRouting();
+
+// Authentication & Authorization Middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+});
+
+// Map Slices
+app.MapControllers(); // Maps the ConnectController
+app.MapRazorPages();  // Maps the Login UI
+app.MapGet("/manage/health", () => StatusCodes.Status200OK);
+app.Run();

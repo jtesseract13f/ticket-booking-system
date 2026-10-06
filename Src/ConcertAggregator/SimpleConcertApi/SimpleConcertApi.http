@@ -1,6 +1,0 @@
-@SimpleConcertApi_HostAddress = http://localhost:5000
-
-GET {{SimpleConcertApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

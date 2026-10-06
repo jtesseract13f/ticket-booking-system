@@ -29,3 +29,24 @@ spec:
             name: identity-provider-microservice-generic
             port:
               number: 80
+      - path: /concert-aggregator
+        pathType: Prefix
+        backend:
+          service:
+            name: concert-aggregator-microservice-generic
+            port:
+              number: 80
+      - path: /gateway
+        pathType: Prefix
+        backend:
+          service:
+            name: gateway-microservice-generic
+            port:
+              number: 80
+      - path: /email-service
+        pathType: Prefix
+        backend:
+          service:
+            name: email-service-microservice-generic
+            port:
+              number: 80

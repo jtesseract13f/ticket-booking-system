@@ -9,3 +9,7 @@ initdbScripts:
     GRANT ALL PRIVILEGES ON DATABASE simple_concert_service_db TO myuser;
     CREATE DATABASE identity-provider-db;
     GRANT ALL PRIVILEGES ON DATABASE identity-provider-db TO myuser;
+    CREATE DATABASE concert-aggregator-db;
+    GRANT ALL PRIVILEGES ON DATABASE concert-aggregator-db TO myuser;
+    CREATE DATABASE email-service-db;
+    GRANT ALL PRIVILEGES ON DATABASE email-service-db TO myuser;

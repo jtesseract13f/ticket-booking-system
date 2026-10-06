@@ -182,3 +182,256 @@
     border-right-color: var(--border);
   }
 }
+/* src/App.css */
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; background: #f6f7fb; color: #1a1a1a; }
+
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.header, .footer { padding: 16px 24px; background: #1a1a1a; color: #fff; }
+.header { display: flex; justify-content: space-between; align-items: center; }
+.header a { color: #fff; text-decoration: none; }
+.footer { text-align: center; font-size: 14px; }
+
+.page { flex: 1; max-width: 1200px; margin: 0 auto; padding: 24px; width: 100%; }
+
+.search-panel {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 12px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  margin-bottom: 24px;
+}
+.search-panel__input, .search-panel__submit {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+.search-panel__submit { background: #2563eb; color: #fff; border: none; cursor: pointer; }
+.search-panel__submit:disabled { opacity: .6; cursor: wait; }
+
+.ticket-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.ticket-list__empty { grid-column: 1 / -1; text-align: center; color: #666; }
+
+.ticket-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  transition: transform .15s, box-shadow .15s;
+}
+.ticket-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.1); }
+.ticket-card__image { width: 100%; height: 160px; object-fit: cover; }
+.ticket-card__body { padding: 12px 16px 16px; }
+.ticket-card__title { margin: 0 0 8px; font-size: 18px; }
+.ticket-card__meta { margin: 4px 0; font-size: 14px; color: #555; }
+.ticket-card__price { margin: 8px 0 0; font-weight: 600; color: #2563eb; }
+
+.detail { max-width: 900px; }
+.detail__back { display: inline-block; margin-bottom: 16px; color: #2563eb; text-decoration: none; }
+.detail__image { width: 100%; max-height: 360px; object-fit: cover; border-radius: 12px; }
+.detail__title { margin: 16px 0 4px; }
+.detail__type { color: #666; margin: 0 0 16px; }
+.detail__list { display: grid; grid-template-columns: 220px 1fr; gap: 8px 16px; background: #fff; padding: 20px; border-radius: 12px; }
+.detail__list dt { color: #666; }
+.detail__list dd { margin: 0; word-break: break-word; }
+
+/* ---- Admin ---- */
+.admin-layout { min-height: 100vh; background: #f6f7fb; }
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #0f172a;
+  color: #fff;
+}
+.admin-header__left { display: flex; gap: 16px; align-items: center; }
+.admin-header__title { font-weight: 600; opacity: .8; }
+.admin-header__nav { display: flex; gap: 16px; align-items: center; }
+.admin-header__link {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.admin-header__link:hover { color: #fff; background: rgba(255,255,255,.08); }
+.admin-header__link.is-active { color: #fff; background: rgba(255,255,255,.16); }
+
+/* src/App.css */
+.lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+}
+
+/* светлый хэдер */
+.lang-switcher--light {
+  background: #eef0f4;
+}
+.lang-switcher--light .lang-switcher__btn {
+  color: #475569;
+}
+.lang-switcher--light .lang-switcher__btn:hover {
+  color: #0f172a;
+  background: rgba(15, 23, 42, .06);
+}
+.lang-switcher--light .lang-switcher__btn.is-active {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* тёмный хэдер (админка) */
+.lang-switcher--dark {
+  background: rgba(255, 255, 255, .08);
+}
+.lang-switcher--dark .lang-switcher__btn {
+  color: #cbd5e1;
+}
+.lang-switcher--dark .lang-switcher__btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, .12);
+}
+.lang-switcher--dark .lang-switcher__btn.is-active {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* общая кнопка */
+.lang-switcher__btn {
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  transition: background .15s, color .15s;
+}
+
+/* мобильная адаптация — на узких экранах чуть компактнее */
+@media (max-width: 640px) {
+  .lang-switcher__btn { padding: 4px 6px; font-size: 11px; }
+}
+.page__title { margin: 0 0 20px; }
+
+.node-table-wrap {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+.node-table { width: 100%; border-collapse: collapse; }
+.node-table th, .node-table td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eef0f4;
+  font-size: 14px;
+}
+.node-table th { background: #f8fafc; color: #475569; font-weight: 600; }
+.node-table tr:last-child td { border-bottom: none; }
+
+.node-row__link a { color: #2563eb; text-decoration: none; word-break: break-all; }
+.node-row__link a:hover { text-decoration: underline; }
+
+.node-row__select {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+}
+
+/* switch */
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.switch__slider {
+  width: 38px; height: 22px; border-radius: 999px;
+  background: #cbd5e1; position: relative; transition: background .15s;
+}
+.switch__slider::after {
+  content: '';
+  position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: transform .15s;
+}
+.switch input:checked + .switch__slider { background: #22c55e; }
+.switch input:checked + .switch__slider::after { transform: translateX(16px); }
+.switch__label { font-size: 14px; color: #334155; }
+
+.user-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-menu__name {
+  font-size: 14px;
+  color: inherit;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-menu__logout {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 13px;
+  opacity: .85;
+}
+.user-menu__logout:hover { opacity: 1; }
+
+/* src/App.css */
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;               /* ← вот этого не хватало */
+}
+
+.header__nav > * {
+  flex-shrink: 0;          /* кнопки не сжимаются на узких экранах */
+}
+
+/* сама кнопка "Войти" для неавторизованных */
+.header__nav button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, .35);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background .15s, border-color .15s;
+}
+.header__nav button:hover {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .55);
+}
+
+.admin-header__nav {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* лёгкий визуальный разделитель между группами справа */
+.admin-header__nav > .lang-switcher {
+  margin-left: 8px;
+  margin-right: 4px;
+}

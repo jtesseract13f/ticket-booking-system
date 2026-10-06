@@ -158,7 +158,17 @@ namespace IdentityProvider.Features.Connect
             identity.AddClaim(Claims.Subject, userIdString);
             identity.AddClaim(Claims.Name, await _userManager.GetUserNameAsync(user) ?? user.UserName ?? "Unknown User");
             identity.AddClaim(Claims.Email, await _userManager.GetEmailAsync(user) ?? "");
-
+            
+            foreach (var role in await _userManager.GetRolesAsync(user))
+            {
+                var roleClaim = new Claim(OpenIddictConstants.Claims.Role, role);
+                roleClaim.SetDestinations(
+                    OpenIddictConstants.Destinations.AccessToken,
+                    OpenIddictConstants.Destinations.IdentityToken
+                );
+                identity.AddClaim(roleClaim);
+            }
+            
             identity.SetScopes(scopes);
 
             var resources = await _scopeManager.ListResourcesAsync(scopes).ToListAsync();
@@ -179,6 +189,12 @@ namespace IdentityProvider.Features.Connect
             foreach (var claim in identity.Claims)
             {
                 claim.SetDestinations(GetDestinations(claim, newPrincipal));
+            }
+            
+            foreach (var claim in identity.Claims)
+            {
+                var dest = claim.GetDestinations();
+                Console.WriteLine($"[OIDC] {claim.Type} = {claim.Value} → {string.Join(",", dest)}");
             }
 
             return SignIn(newPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -475,7 +491,7 @@ namespace IdentityProvider.Features.Connect
 
                 case Claims.Role:
                     yield return Destinations.AccessToken;
-                    if (principal.HasScope(Scopes.Roles)) yield return Destinations.IdentityToken;
+                    yield return Destinations.IdentityToken;
                     yield break;
 
                 case "permission":

@@ -51,7 +51,7 @@ namespace IdentityProvider.Infrastructure.Worker
                     Description = "Access the Inventory management system.",
                     Resources =
                     {
-                        "ims_backend_api" // Optional: Validates the 'aud' claim for the resource server
+                        "ims_backend_api"
                     }
                 }, cancellationToken);
             }
@@ -137,12 +137,12 @@ namespace IdentityProvider.Infrastructure.Worker
                 await roleManager.CreateAsync(role);
             }
 
-            if (await userManager.FindByNameAsync("sosal") is null)
+            if (await userManager.FindByNameAsync("testUser") is null)
             {
                 var user = new ApplicationUser
                 {
-                    UserName = "sosal",
-                    Email = "sosal@test.com",
+                    UserName = "testUser",
+                    Email = "test@test.com",
                     EmailConfirmed = true
                 };
 

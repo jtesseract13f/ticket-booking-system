@@ -10,3 +10,12 @@ services:
   - path: /identity-provider
     serviceName: identity-provider-microservice-generic
     servicePort: 80
+  - path: /concert-aggregator
+    serviceName: concert-aggregator-microservice-generic
+    servicePort: 80
+  - path: /gateway
+    serviceName: gateway-microservice-generic
+    servicePort: 80
+  - path: /libretranslate
+    serviceName: libretranslate
+    servicePort: 80

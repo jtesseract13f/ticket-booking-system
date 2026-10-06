@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace ConcertAggregator.Models;
 
 public class EventTranslation
-{ //TODO: прикрутить локальный ИИ для авто-генерации перевода
+{
     [Key]
     public int Id { get; set; }
     [MaxLength(128)]

@@ -1,0 +1,52 @@
+replicaCount: 1
+
+image:
+  repository: gateway
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  targetPort: 80
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Development"
+  - name: Kafka__BootstrapServers
+    value: "kafka-kafka:9092"
+  - name: ServiceName
+    value: "gateway"
+  - name: ConcertAggregatorUri
+    value: "http://ticket-booking-system.local/concert-aggregator"
+  - name: EmailServiceUri
+    value: "http://ticket-booking-system.local/email-service"
+  - name: IdentityProviderUri
+    value: "http://ticket-booking-system.local/identity-provider"
+
+livenessProbe:
+  httpGet:
+    path: /gateway/manage/health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /gateway/manage/health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+resources:
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: false
+  host: ticket-booking-system.local
+  path: /gateway
+  tlsSecret: ticket-booking-system-tls

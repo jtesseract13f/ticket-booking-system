@@ -9,9 +9,9 @@ public class ConcertNodeApi : INodeApi
 {
     public async Task<IEnumerable<EventDto>> GetAllEvents(Uri baseUri)
     {
-        var api = RestService.For<ISimpleConcertApi>(baseUri.Host);
+        var api = RestService.For<ISimpleConcertApi>(baseUri.AbsoluteUri);
         var events = await api.GetConcerts();
-        //TODO: Add resilience if API not available
+
         return events.Select(x => new EventDto(
             x.Id.ToString(),
             x.Cost,

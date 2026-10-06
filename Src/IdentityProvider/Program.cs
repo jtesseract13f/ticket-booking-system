@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using IdentityProvider.Infrastructure.Worker;
 using IdP.Web.Infrastructure;
 using IdP.Web.Infrastructure.Data;
@@ -21,8 +22,6 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
 });
-
-
 
 // Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -95,8 +94,6 @@ builder.Services.AddOpenIddict()
         options.SetConfigurationEndpointUris(new Uri($"{issuerUrl}/.well-known/openid-configuration", UriKind.Absolute));
         options.SetJsonWebKeySetEndpointUris(new Uri($"{issuerUrl}/.well-known/jwks", UriKind.Absolute));
         
-        
-        
         // 2. Define flows
         options.AllowAuthorizationCodeFlow()
                .AllowClientCredentialsFlow()
@@ -108,6 +105,23 @@ builder.Services.AddOpenIddict()
             OpenIddictConstants.Scopes.Profile,
             OpenIddictConstants.Scopes.Roles,
             OpenIddictConstants.Scopes.OfflineAccess);
+        
+        options.AddEventHandler<OpenIddict.Server.OpenIddictServerEvents.ProcessSignInContext>(builder =>
+        {
+            builder.UseInlineHandler(context =>
+            {
+                var identity = (ClaimsIdentity)context.Principal!.Identity!;
+
+                // Все claims типа "role" должны попасть в access_token и id_token
+                foreach (var claim in context.Principal.Claims)
+                {
+                    claim.SetDestinations(OpenIddictConstants.Destinations.AccessToken,
+                        OpenIddictConstants.Destinations.IdentityToken);
+                }
+
+                return default;
+            });
+        });
 
         // 4. Security (Dev only: Ephemeral keys)
         // IN PRODUCTION: Use .AddEncryptionCertificate() and .AddSigningCertificate()

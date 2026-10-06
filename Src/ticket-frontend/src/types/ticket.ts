@@ -5,7 +5,6 @@ export interface Ticket {
   id: string;               // GUID
   name: string;             // до 256
   location: string;         // до 256
-  eventType: EventType;
   datetime: string;         // ISO UTC
   minPrice: number;         // вещественное
   description?: string;     // до 4096

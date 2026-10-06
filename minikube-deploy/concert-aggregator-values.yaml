@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: concert-aggregator
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  targetPort: 80
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Development"
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=postgresql;Database=concert-aggregator-db;Username=myuser;Password=mypassword"
+  - name: Kafka__BootstrapServers
+    value: "kafka-kafka:9092"
+  - name: ServiceName
+    value: "concert-aggregator"
+  - name: libretranslate
+    value: "http://ticket-booking-system.local/libretranslate"
+
+resources:
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: false
+  host: ticket-booking-system.local
+  path: /concert-aggregator
+  tlsSecret: ticket-booking-system-tls

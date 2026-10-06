@@ -8,7 +8,7 @@ public class CinemaNodeApi : INodeApi
 {
     public async Task<IEnumerable<EventDto>> GetAllEvents(Uri baseUri)
     {
-        var api = RestService.For<ISimpleCinemaApi>(baseUri.Host);
+        var api = RestService.For<ISimpleCinemaApi>(baseUri.AbsoluteUri);
         var events = await api.GetCinemas();
         //TODO: Add resilience if API not available
         return events.Select(x => new EventDto(

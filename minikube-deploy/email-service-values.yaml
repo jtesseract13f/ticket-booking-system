@@ -1,0 +1,48 @@
+replicaCount: 1
+
+image:
+  repository: email-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  targetPort: 80
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Development"
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=postgresql;Database=email-service-db;Username=myuser;Password=mypassword"
+  - name: Kafka__BootstrapServers
+    value: "kafka-kafka:9092"
+  - name: ServiceName
+    value: "email-service"
+
+livenessProbe:
+  httpGet:
+    path: /email-service/manage/health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /email-service/manage/health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+resources:
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: false
+  host: ticket-booking-system.local
+  path: /email-service
+  tlsSecret: ticket-booking-system-tls

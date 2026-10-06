@@ -37,6 +37,6 @@ public class NodeRepository(ConcertDbContext _dbContext)
 
     public async Task<IEnumerable<Node>> GetAll()
     {
-        return _dbContext.Nodes.AsNoTracking();
+        return await _dbContext.Nodes.AsNoTracking().ToListAsync();
     }
 }

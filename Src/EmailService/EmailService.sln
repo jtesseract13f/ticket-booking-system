@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{207E88C9-5785-426D-A4F6-04EB94C01CB2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITest", "APITest\APITest.csproj", "{64BECA97-4955-47C3-985C-CC89D70F600F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{7637A16D-A519-4390-96B3-5FF267BFE482}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,13 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{207E88C9-5785-426D-A4F6-04EB94C01CB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{207E88C9-5785-426D-A4F6-04EB94C01CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{207E88C9-5785-426D-A4F6-04EB94C01CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{207E88C9-5785-426D-A4F6-04EB94C01CB2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64BECA97-4955-47C3-985C-CC89D70F600F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64BECA97-4955-47C3-985C-CC89D70F600F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64BECA97-4955-47C3-985C-CC89D70F600F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64BECA97-4955-47C3-985C-CC89D70F600F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7637A16D-A519-4390-96B3-5FF267BFE482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7637A16D-A519-4390-96B3-5FF267BFE482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7637A16D-A519-4390-96B3-5FF267BFE482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7637A16D-A519-4390-96B3-5FF267BFE482}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
